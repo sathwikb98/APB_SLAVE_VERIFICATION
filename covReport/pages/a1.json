@@ -1,0 +1,14 @@
+var g_data = {
+a1098:{
+scopes:[{s:'1008',b:'1',val:'apb_pkg'},{val:'apb_slv_sequence'},{s:'1097',b:'0',val:'body'},{link:'z.htm?f=0&s=1098',val:'#ublk#141059959#10'}]
+,assertions:[{dummy:0},{cr:'c',c:'g',z:'immed__12',fc:'Gr',pc:'Gr',h0:'0',h1:'20'}
+],
+},
+a1781:{
+scopes:[{s:'1691',b:'1',val:'work.apb_pkg'},{val:'apb_slv_sequence'},{s:'1780',b:'0',val:'body'},{link:'z.htm?f=0&s=1781',val:'#ublk#141059959#10'}]
+,assertions:[{dummy:0},{cr:'c',c:'g',z:'immed__12',fc:'Gr',pc:'Gr',h0:'0',h1:'20'}
+],
+},
+dummyEnd:0
+};
+processAssertionsData(g_data,1);
