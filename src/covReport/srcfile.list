@@ -1,5 +1,7 @@
 apb_active_monitor.sv
 apb_agent.sv
+apb_assertion.sv
+apb_bind.sv
 apb_driver.sv
 apb_env.sv
 apb_interface.sv

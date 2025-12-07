@@ -2,6 +2,8 @@
 `include "apb_pkg.sv"
 `include "apb_interface.sv"
 `include "apb_slave.sv"
+`include "apb_assertion.sv"
+`include "apb_bind.sv"
 
 module top;
   bit pclk;

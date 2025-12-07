@@ -29,7 +29,7 @@ class apb_slv_seq_item extends uvm_sequence_item;
   endfunction
 
   function string conv_to_str();
-    return $sformatf("apb_seeq_item -> psel: %0b | penable : %0b | pwrite : %0b | paddr : %0d | pwdata : %0d | pstrb : %4b | prdata : %0d | pready : %0b | pslverr : %0b",psel,penable,pwrite,paddr,pwdata,pstrb,prdata,pready,pslverr);
+    return $sformatf("apb_seq_item -> psel: %0b | penable : %0b | pwrite : %0b | paddr : %0d | pwdata : %0d | pstrb : %4b | prdata : %0d | pready : %0b | pslverr : %0b",psel,penable,pwrite,paddr,pwdata,pstrb,prdata,pready,pslverr);
   endfunction
 
 endclass

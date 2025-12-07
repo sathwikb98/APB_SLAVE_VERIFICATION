@@ -7,7 +7,7 @@ class apb_slv_sequence extends uvm_sequence #(apb_slv_seq_item);
 
   virtual task body();
       req = apb_slv_seq_item::type_id::create("req");
-      repeat(20) begin
+      repeat(`no_of_transaction*2) begin
         wait_for_grant();
         assert(req.randomize());
       send_request(req);
@@ -26,8 +26,9 @@ class apb_slv_sequence_simple_write extends uvm_sequence#(apb_slv_seq_item);
   
   task body();
     int addr, data = 5;
+    `uvm_do_with(req, {req.penable==1; req.psel == 0; req.paddr == addr; req.pstrb == 15; req.pwrite == 1; req.pwdata == data; });
     `uvm_do_with(req, {req.penable==0; req.psel == 0; req.paddr == addr; req.pstrb == 15; req.pwrite == 1; req.pwdata == data; });
-    repeat(10) begin
+    repeat(`no_of_transaction) begin
       `uvm_do_with(req, {req.penable==0; req.psel == 1; req.paddr == addr; req.pstrb == 15; req.pwrite == 1; req.pwdata == data; });
       `uvm_do_with(req, {req.penable==1; req.psel == 1; req.paddr == addr; req.pstrb == 15; req.pwrite == 1; req.pwdata == data;})
       `uvm_do_with(req, {req.penable==0; req.psel == 1;} );
@@ -48,11 +49,11 @@ class apb_slv_sequence_simple_read extends uvm_sequence#(apb_slv_seq_item);
   task body();
     int addr;
     `uvm_do_with(req, {req.penable==0; req.psel == 0; req.paddr == addr; req.pwrite == 0; });
-    repeat(10) begin
+    repeat(`no_of_transaction) begin
       `uvm_do_with(req, {req.penable==0; req.psel == 1; req.paddr == addr; req.pwrite == 0; });
       `uvm_do_with(req, {req.penable==1; req.psel == 1; req.paddr == addr; req.pwrite == 0;})
       `uvm_do_with(req, {req.penable==0; req.psel == 1;} );
-      addr+=30;
+      addr+=5;
     end
   endtask
   
@@ -68,7 +69,7 @@ class apb_slv_sequence_write_read_continous extends uvm_sequence#(apb_slv_seq_it
   task body();
     int addr = $urandom_range(246,0), data = 5;
     `uvm_do_with(req, {req.penable==0; req.psel == 0; req.paddr == addr; req.pstrb == 15; req.pwrite == 1; req.pwdata == data; });
-    repeat(10) begin // write 10 memory location
+    repeat(`no_of_transaction) begin // write `no_of_transaction` memory location
       `uvm_do_with(req, {req.penable==0; req.psel == 1; req.paddr == addr; req.pstrb == 15; req.pwrite == 1; req.pwdata == data; });
       `uvm_do_with(req, {req.penable==1; req.psel == 1; req.paddr == addr; req.pstrb == 15; req.pwrite == 1; req.pwdata == data;});
 //       `uvm_do_with(req, {req.penable==1; req.psel == 1;} );
@@ -76,7 +77,7 @@ class apb_slv_sequence_write_read_continous extends uvm_sequence#(apb_slv_seq_it
       addr+=2;
       data+=5;
     end
-    repeat(10) begin // read the same memory location for output !
+    repeat(`no_of_transaction) begin // read the same memory location for output !
       `uvm_do_with(req, {req.penable==0; req.psel == 1; req.paddr == addr; req.pwrite == 0; });
       `uvm_do_with(req, {req.penable==1; req.psel == 1; req.paddr == addr; req.pwrite == 0;});
       `uvm_do_with(req, {req.penable==0; req.psel == 1;} );
@@ -95,15 +96,16 @@ class apb_slv_sequence_strb_enb_write extends uvm_sequence#(apb_slv_seq_item);
   
   task body();
     int addr = $urandom_range(246,0), data; // max data is 255 bcz 1st byte is valid for 'pstrb'
-    `uvm_do_with(req, {req.penable==0; req.psel == 0; req.paddr == addr; req.pstrb == 1; req.pwrite == 1; req.pwdata == data; });
-    repeat(10) begin // exclude first 8 bits for writing !
-      `uvm_do_with(req, {req.penable==0; req.psel == 1; req.paddr == addr; req.pstrb == 1; req.pwrite == 1; req.pwdata == data; });
-      `uvm_do_with(req, {req.penable==1; req.psel == 1; req.paddr == addr; req.pstrb == 1; req.pwrite == 1; req.pwdata == data;});
+    // Let the 'pstrb' be random !
+    `uvm_do_with(req, {req.penable==0; req.psel == 0; req.paddr == addr; /*req.pstrb == 1;*/ req.pwrite == 1; req.pwdata == data; });
+    repeat(`no_of_transaction) begin // exclude first 8 bits for writing !
+      `uvm_do_with(req, {req.penable==0; req.psel == 1; req.paddr == addr; /*req.pstrb == 1;*/ req.pwrite == 1; req.pwdata == data; });
+      `uvm_do_with(req, {req.penable==1; req.psel == 1; req.paddr == addr; /*req.pstrb == 1;*/ req.pwrite == 1; req.pwdata == data;});
       `uvm_do_with(req, {req.penable==0; req.psel == 0;} );
       addr+=5;
       data+=50;
     end
-    repeat(10) begin // read the same memory location to check for output !
+    repeat(`no_of_transaction) begin // read the same memory location to check for output !
       `uvm_do_with(req, {req.penable==0; req.psel == 1; req.paddr == addr; req.pwrite == 0; });
       `uvm_do_with(req, {req.penable==1; req.psel == 1; req.paddr == addr; req.pwrite == 0;});
       `uvm_do_with(req, {req.penable==0; req.psel == 1;} );      
@@ -121,20 +123,22 @@ class apb_slv_sequence_pslverr extends uvm_sequence#(apb_slv_seq_item);
   endfunction
   
   task body();
-    int addr = $urandom_range(500,255), data; //addr is out of bound !
+    int addr = $urandom_range(`MEM_DEPTH+100,`MEM_DEPTH), data; //addr is out of bound !
     `uvm_do_with(req, {req.penable==0; req.psel == 0; req.paddr == addr; req.pstrb == 15; req.pwrite == 1; req.pwdata == data; });
-    repeat(3) begin // should generate pslverr !
-      `uvm_do_with(req, {req.penable==0; req.psel == 1; req.paddr == addr; req.pstrb == 15; req.pwrite == 1; req.pwdata == data; });
+    `uvm_do_with(req, {req.penable==0; req.psel == 1; req.paddr == addr; req.pstrb == 15; req.pwrite == 1; req.pwdata == data; });
+    repeat(`no_of_transaction) begin // should generate pslverr !
+      `uvm_do_with(req, {req.penable==0; req.psel == 0; req.paddr == addr; req.pstrb == 15; req.pwrite == 1; req.pwdata== data; });
       `uvm_do_with(req, {req.penable==1; req.psel == 1; req.paddr == addr; req.pstrb == 15; req.pwrite == 1; req.pwdata == data;});
       `uvm_do_with(req, {req.penable==0; req.psel == 0;} );
       addr+=5;
       data+=50;
     end
-    repeat(3) begin // read the same memory location to check for output !
+    repeat(`no_of_transaction) begin // read the same memory location to check for output !
+      `uvm_do_with(req, {req.penable==0; req.psel == 0; req.paddr == addr; req.pstrb == 15; req.pwrite == 0; req.pwdata== data; });
       `uvm_do_with(req, {req.penable==0; req.psel == 1; req.paddr == addr; req.pwrite == 0; });
       `uvm_do_with(req, {req.penable==1; req.psel == 1; req.paddr == addr; req.pwrite == 0;});
       `uvm_do_with(req, {req.penable==0; req.psel == 1;} );      
-      addr-=5;
+      addr -=5;
     end
   endtask   
   
@@ -150,7 +154,7 @@ class apb_slv_sequence_write_followed_by_read extends uvm_sequence#(apb_slv_seq_
   task body();
     int addr, data;
     `uvm_do_with(req, {req.penable==0; req.psel == 0; req.paddr == addr; req.pstrb == 15; req.pwrite == 1; req.pwdata == data; });
-    repeat(5) begin // write data @addr !
+    repeat(`no_of_transaction) begin // write data @addr !
       data = $urandom_range(500,1);
       `uvm_do_with(req, {req.penable==0; req.psel == 0; req.paddr == addr; req.pstrb == 15; req.pwrite == 1; req.pwdata == data; });
       `uvm_do_with(req, {req.penable==1; req.psel == 1; req.paddr == addr; req.pstrb == 15; req.pwrite == 1; req.pwdata == data;});
@@ -180,7 +184,7 @@ class apb_slv_regression_tst extends uvm_sequence#(apb_slv_seq_item);
   endfunction
   
   task body();
-    `uvm_do(seq1);
+    //`uvm_do(seq1);
     `uvm_do(seq2);
     `uvm_do(seq3);
     `uvm_do(seq4);
