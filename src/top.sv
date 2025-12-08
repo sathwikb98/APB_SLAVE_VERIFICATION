@@ -1,7 +1,7 @@
 `include "uvm_macros.svh"
 `include "apb_pkg.sv"
 `include "apb_interface.sv"
-`include "apb_slave.sv"
+`include "design/apb_slave.v"
 `include "apb_assertion.sv"
 `include "apb_bind.sv"
 
