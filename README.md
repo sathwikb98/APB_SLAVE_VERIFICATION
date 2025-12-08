@@ -1,4 +1,3 @@
 # APB_SLAVE_VERIFICATION
-[<img width="2100" height="1390" alt="APB_SLAVE_VERIFICATION_ARCHITECTURE" src="https://github.com/user-attachments/assets/a2f6a277-0d33-46ad-ab89-f129915d6394" />
-](APB_SLAVE_ARCHITECTURE)
+[<img width="2100" height="1390" alt="APB_SLAVE_VERIFICATION_ARCHITECTURE" src="https://github.com/user-attachments/assets/dbd4c2f9-1fae-4633-bb5e-06cfa53fbb7a" />](APB_SLAVE_ARCHITECTURE)
 APB SLAVE DESIGN IS VERIFIED WITH **PSTRB** SIGNAL AND **PSLVERR**, THIS UTILIZES THE TB AS MASTER TO INTERACT WITH SLAVE.
